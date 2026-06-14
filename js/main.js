@@ -7,6 +7,72 @@
 (function () {
   "use strict";
 
+  /* ---------- 0. IMAGE LIBRARY ----------
+     All photography lives here in ONE place. To swap in your own photo,
+     just change the URL for that key (or point it at /assets/your-photo.webp).
+     Applied to any element with data-img="key" via the --img CSS variable.
+     Current photos are free-license Unsplash placeholders — replace with
+     photos of YOUR food before serious marketing. */
+  var U = function (id) { return "url('https://images.unsplash.com/photo-" + id + "?auto=format&fit=crop&w=900&q=80')"; };
+  var AN_IMAGES = {
+    hero:        U("1728910156510-77488f19b152"),
+    story:       U("1556911073-52527ac43761"),
+    /* category cards */
+    "cat-baked":  U("1606983340126-99ab4feaa64a"),
+    "cat-mains":  U("1603496987351-f84a3ba5ec85"),
+    "cat-breads": U("1668357530437-72a12c660f94"),
+    "cat-kebabs": U("1532636875304-0c89119d9b4d"),
+    "cat-achar":  U("1601702538934-efffab67ab65"),
+    "cat-gifts":  U("1508899203029-1c9eb493c9bd"),
+    /* baked */
+    "brownie":         U("1636743715220-d8f8dd900b87"),
+    "brownie-fudge":   U("1606313564200-e75d5e30476c"),
+    "brownie-walnut":  U("1636743715220-d8f8dd900b87"),
+    "brownie-cream":   U("1624353365286-3f8d62daad51"),
+    "brownie-caramel": U("1605190557072-1fe6a230ee65"),
+    "cake":     U("1606983340126-99ab4feaa64a"),
+    "cupcake":  U("1588195538326-c5b1e9f80a1b"),
+    "cookie":   U("1517427294546-5aa121f68e8a"),
+    "mixed-baked": U("1602351447937-745cb720612f"),
+    /* desi mains */
+    "karahi":   U("1603496987351-f84a3ba5ec85"),
+    "karahi2":  U("1694579740719-0e601c5d2437"),
+    "nihari":   U("1585937421612-70a008356fbe"),
+    "biryani":  U("1589302168068-964664d93dc0"),
+    "paya":     U("1612700722193-f0410adb8949"),
+    "pulao":    U("1631515243349-e0cb75fb8d3a"),
+    "daal":     U("1585417791023-a5a6164b2646"),
+    "haleem":   U("1577186912275-4f74c57458ef"),
+    "gosht":    U("1631292784640-2b24be784d5d"),
+    /* breads */
+    "paratha":       U("1668357530437-72a12c660f94"),
+    "paratha-plain": U("1683533743190-89c9b19f9ea6"),
+    "naan":          U("1580064003296-29deb3521370"),
+    "puri":          U("1707424963059-6a7a559cae28"),
+    /* kebabs */
+    "seekh":  U("1532636875304-0c89119d9b4d"),
+    "shami":  U("1599487488170-d11ec9c172f0"),
+    "tikka":  U("1629117407975-d3bdfd26aa86"),
+    "samosa": U("1599307767316-776533bb941c"),
+    /* achar */
+    "achar":         U("1617854307432-13950e24ba07"),
+    "achar-mixed":   U("1601702538934-efffab67ab65"),
+    "achar-lemon":   U("1623207485293-fc768c6575fa"),
+    "achar-chutney": U("1633383718081-22ac93e3db65"),
+    /* gift boxes */
+    "gift-eid":     U("1508899203029-1c9eb493c9bd"),
+    "gift-ramadan": U("1668127039852-0e7c8b3a1601"),
+    "gift-dawat":   U("1728910156510-77488f19b152"),
+    "gift-corp":    U("1664849173063-8d8244ac3933"),
+    "gift-baby":    U("1649789093457-3a973148fa27")
+  };
+  function initImages() {
+    document.querySelectorAll("[data-img]").forEach(function (el) {
+      var url = AN_IMAGES[el.getAttribute("data-img")];
+      if (url) el.style.setProperty("--img", url);
+    });
+  }
+
   /* ---------- 1. LANGUAGE TOGGLE ---------- */
   var I18N = window.AN_I18N || { en: {}, ur: {} };
   var toUrdu = window.AN_toUrduDigits || function (s) { return s; };
@@ -123,6 +189,7 @@
 
   /* ---------- INIT ---------- */
   document.addEventListener("DOMContentLoaded", function () {
+    initImages();
     initLang();
     initReveal();
     initMenu();

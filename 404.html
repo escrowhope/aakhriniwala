@@ -7,17 +7,26 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="/css/style.css" />
+  <!-- 404 is served from any path depth, so styles are inlined (no external CSS dependency) -->
+  <style>
+    :root{--maroon:#7A2E2E;--gold:#D9A441;--cream:#FAF3E7;--charcoal:#2C211B}
+    *{margin:0;box-sizing:border-box}
+    body{font-family:'Inter',system-ui,sans-serif;background:var(--cream);color:var(--charcoal);
+      min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:2rem}
+    h1{font-family:'Fraunces',serif;font-size:clamp(2rem,6vw,3rem);margin-bottom:.75rem}
+    p{color:#5A4A3F;max-width:440px;margin:0 auto 1.75rem}
+    .btn{display:inline-flex;background:var(--gold);color:var(--charcoal);font-weight:600;
+      padding:.85rem 1.6rem;border-radius:999px;text-decoration:none;transition:transform .2s}
+    .btn:hover{transform:translateY(-2px)}
+    svg{margin:0 auto 1.5rem;display:block}
+  </style>
 </head>
 <body>
-  <main class="section center" style="min-height:80vh;display:flex;align-items:center;justify-content:center">
-    <div class="wrap">
-      <svg width="80" height="80" viewBox="0 0 100 100" style="margin:0 auto var(--s-3)"><circle cx="46" cy="50" r="34" fill="#7A2E2E"/><path d="M78 30 A34 34 0 0 1 78 70 L62 50 Z" fill="#D9A441"/></svg>
-      <h1>This plate's empty</h1>
-      <p style="max-width:440px;margin:var(--s-2) auto var(--s-4)">The page you're looking for has moved or never existed — but the kitchen's still open.</p>
-      <a class="btn btn--primary" href="/">Back to home</a>
-    </div>
+  <main>
+    <svg width="80" height="80" viewBox="0 0 100 100"><circle cx="46" cy="50" r="34" fill="#7A2E2E"/><path d="M78 30 A34 34 0 0 1 78 70 L62 50 Z" fill="#D9A441"/></svg>
+    <h1>This plate's empty</h1>
+    <p>The page you're looking for has moved or never existed — but the kitchen's still open.</p>
+    <a class="btn" href="/">Back to home</a>
   </main>
 </body>
 </html>

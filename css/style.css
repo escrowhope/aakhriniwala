@@ -55,7 +55,7 @@
 
 /* ---------- 2. RESET ---------- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; overflow-x: hidden; }
 body {
   font-family: var(--font-body);
   font-size: 16px;               /* mobile-readability floor */
@@ -64,6 +64,7 @@ body {
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent; /* suppress iOS blue flash on tap */
 }
 img, svg { display: block; max-width: 100%; height: auto; }
 a { color: inherit; text-decoration: none; }
@@ -154,6 +155,16 @@ p  { color: var(--text-mute); }
 .menu-btn[aria-expanded="true"] span { background: transparent; }
 .menu-btn[aria-expanded="true"] span::before { transform: translateY(7px) rotate(45deg); }
 .menu-btn[aria-expanded="true"] span::after  { transform: translateY(-7px) rotate(-45deg); }
+
+/* mobile nav backdrop overlay (injected by JS) */
+.nav-overlay {
+  display: none; position: fixed; inset: 0; z-index: 49;
+  background: rgba(44, 33, 27, 0.45);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  opacity: 0; transition: opacity var(--t-slow);
+}
+.nav-overlay.open { display: block; opacity: 1; }
 
 /* ---------- 7. HERO ---------- */
 .hero {
@@ -297,7 +308,10 @@ p  { color: var(--text-mute); }
 
 /* ---------- 16. WHATSAPP STICKY ---------- */
 .wa-sticky {
-  position: fixed; right: 18px; bottom: 18px; z-index: 60;
+  position: fixed;
+  right: max(18px, env(safe-area-inset-right, 18px));
+  bottom: max(18px, calc(env(safe-area-inset-bottom, 0px) + 12px));
+  z-index: 60;
   display: inline-flex; align-items: center; gap: 0.5rem;
   background: var(--wa-green); color: #fff; font-weight: 600; font-size: 0.95rem;
   padding: 0.8rem 1.15rem; border-radius: var(--radius-pill);
@@ -371,6 +385,22 @@ html[dir="rtl"] .wa-sticky { right: auto; left: 18px; }
 body.urdu-mode .urdu-only { display: inline; }
 body.urdu-mode .en-only { display: none; }
 
+/* ---------- 19b. TOUCH DEVICES — kill sticky-hover transforms ---------- */
+/* On touchscreens :hover state persists after a tap and causes visual glitches */
+@media (hover: none) {
+  .cat-card:hover       { transform: none; box-shadow: none; }
+  .cat-card:hover::before { transform: none; }
+  .cat-card:hover::after  { background: linear-gradient(180deg, rgba(44,33,27,0.05) 25%, rgba(44,20,20,0.55) 60%, rgba(40,18,18,0.92) 100%); }
+  .cat-card:hover .explore { gap: 0.4rem; }
+  .prod-card:hover         { transform: none; box-shadow: none; }
+  .prod-card:hover .prod-media { transform: none; }
+  .btn:hover               { transform: none; }
+  .btn--primary:hover      { box-shadow: var(--shadow-sm); }
+  .wa-sticky:hover         { transform: none; box-shadow: 0 8px 24px rgba(37,211,102,0.45); }
+  .ig-cell:hover           { transform: none; filter: none; }
+  .foot-col a:hover        { color: #C9B89F; }
+}
+
 /* ---------- 20. RESPONSIVE ---------- */
 @media (max-width: 1024px) {
   .foot-grid { grid-template-columns: 1fr 1fr; gap: var(--s-5); }
@@ -378,13 +408,18 @@ body.urdu-mode .en-only { display: none; }
 }
 @media (max-width: 768px) {
   :root { --header-h: 64px; }
-  .nav-links { position: fixed; inset: var(--header-h) 0 auto 0; flex-direction: column; align-items: stretch;
+  /* mobile nav: slide down from header */
+  .nav-links {
+    position: fixed; inset: var(--header-h) 0 auto 0; flex-direction: column; align-items: stretch;
     background: var(--cream); border-bottom: 1px solid var(--line); padding: var(--s-3); gap: 0;
-    transform: translateY(-120%); transition: transform var(--t-slow); box-shadow: var(--shadow-md); }
+    transform: translateY(-120%); transition: transform var(--t-slow); box-shadow: var(--shadow-md);
+    z-index: 50;
+  }
   .nav-links.open { transform: translateY(0); }
-  .nav-links a { padding: 0.9rem 0.4rem; border-bottom: 1px solid var(--line); }
+  .nav-links a { padding: 1rem 0.4rem; border-bottom: 1px solid var(--line); min-height: 48px; display: flex; align-items: center; }
   .nav-links a::after { display: none; }
   .menu-btn { display: flex; }
+  /* layouts */
   .trust-grid { grid-template-columns: 1fr 1fr; gap: var(--s-3); }
   .steps { grid-template-columns: 1fr; gap: var(--s-3); }
   .story-grid { grid-template-columns: 1fr; gap: var(--s-4); }
@@ -393,14 +428,24 @@ body.urdu-mode .en-only { display: none; }
   .ig-grid { grid-template-columns: repeat(3, 1fr); }
   .pdp { grid-template-columns: 1fr; gap: var(--s-4); }
   .pdp-media { position: static; }
+  /* hero: stop the pan animation on mobile (battery + jank) */
+  .hero::before { animation: none; transform: scale(1.04); }
+  /* tighten inner-page heroes */
+  .page-hero { padding-block: var(--s-5) var(--s-4); }
+  /* minimum touch targets */
+  .btn { min-height: 44px; }
+  .lang-toggle button { min-height: 36px; padding: 0.45rem 0.9rem; }
 }
 @media (max-width: 480px) {
   .cat-grid, .prod-grid { grid-template-columns: 1fr; }
   .hero-cta { flex-direction: column; }
   .hero-cta .btn { width: 100%; justify-content: center; }
+  .trust-grid { grid-template-columns: 1fr; }   /* single column on tiny screens */
   .foot-grid { grid-template-columns: 1fr; }
   .wa-sticky span { display: none; }   /* icon-only on tiny screens */
   .wa-sticky { padding: 0.9rem; }
+  /* keep hero from being too tall on small phones */
+  .hero { min-height: 82vh; min-height: 82svh; }
 }
 
 /* respect reduced motion */
